@@ -1,0 +1,23 @@
+[
+  {
+    "title": "Bem-vindo ao Blog!",
+    "slug": "bem-vindo-ao-blog",
+    "content": "<p>Olá, sou Gabriel Gomes dono desse blog e Analista de Requisitos na Infojobs. Este é o primeiro post do blog, onde vou compartilhar meus estudos e aprofundamentos sobre APIs REST. O objetivo é explorar o que são, como funcionam e suas aplicações em diferentes contextos.</p>",
+    "image": "",
+    "date": "2024-09-15"
+  },
+  {
+    "title": "Teste",
+    "content": "<p>Teste</p>",
+    "image": "",
+    "slug": "teste",
+    "date": "2024-09-16"
+  },
+  {
+    "title": "Teste2",
+    "content": "<p>Teste2</p>",
+    "image": "",
+    "slug": "teste2",
+    "date": "2024-09-16"
+  }
+]

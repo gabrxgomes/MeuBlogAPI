@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Galeria de Postagens - Administração</title>
+  
+  <!-- Adicionar Bootstrap CSS -->
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../css/admin.css">
+
+  <style>
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: bold;
+    }
+    .card-text {
+      font-size: 1rem;
+      color: #333;
+    }
+    .post-item {
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <header class="text-center my-4">
+    <h1>Postagens</h1>
+    <a href="index.html" class="btn btn-primary">Voltar à Administração</a>
+  </header>
+
+  <main class="container">
+    <section id="search" class="my-4">
+      <div class="input-group mb-3">
+        <input type="text" class="form-control" id="searchInput" placeholder="Buscar por título ou conteúdo">
+        <div class="input-group-append">
+          <button class="btn btn-primary" type="button" onclick="searchPosts()">Buscar</button>
+        </div>
+      </div>
+    </section>
+    
+    <div id="postList" class="row">
+      <!-- A lista de postagens será carregada aqui -->
+    </div>
+  </main>
+
+  <!-- Adicionar Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+  <script>
+    let allPosts = [];
+
+    // Função para carregar todas as postagens
+    function loadPosts() {
+      fetch('/api/posts')
+        .then(response => response.json())
+        .then(posts => {
+          allPosts = posts; // Armazenar todas as postagens
+          displayPosts(posts); // Exibir todas as postagens
+        });
+    }
+
+    // Função para exibir postagens
+    function displayPosts(posts) {
+      const postList = document.getElementById('postList');
+      postList.innerHTML = ''; // Limpar lista anterior
+      
+      posts.forEach((post, index) => {
+        const postElement = document.createElement('div');
+        postElement.className = 'col-md-4 post-item'; // Usar grid de 3 colunas para cards
+        postElement.innerHTML = `
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">${post.title}</h5>
+              <p class="card-text">${post.content.substring(0, 100)}...</p>
+              <button class="btn btn-primary" onclick="editPost(${index})">Editar</button>
+              <button class="btn btn-danger" onclick="deletePost(${index})">Excluir</button>
+            </div>
+          </div>
+        `;
+        postList.appendChild(postElement);
+      });
+    }
+
+    // Função de pesquisa
+    function searchPosts() {
+      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+      const filteredPosts = allPosts.filter(post => {
+        const titleMatch = post.title.toLowerCase().includes(searchTerm);
+        const contentMatch = post.content.toLowerCase().includes(searchTerm);
+        return titleMatch || contentMatch;
+      });
+      displayPosts(filteredPosts); // Exibir apenas as postagens filtradas
+    }
+
+    // Função para editar uma postagem
+    function editPost(index) {
+      fetch('/api/posts')
+        .then(response => response.json())
+        .then(posts => {
+          const post = posts[index];
+          window.localStorage.setItem('editPost', JSON.stringify({ post, index })); // Armazenar a postagem no localStorage
+          window.location.href = 'index.html'; // Redirecionar de volta para a página de postagem
+        });
+    }
+
+    // Função para excluir uma postagem
+    function deletePost(index) {
+      if (confirm('Tem certeza que deseja excluir esta postagem?')) {
+        fetch(`/api/posts/${index}`, {
+          method: 'DELETE',
+        })
+        .then(response => {
+          if (response.ok) {
+            alert('Postagem excluída com sucesso!');
+            loadPosts(); // Recarregar a lista de postagens
+          } else {
+            alert('Erro ao excluir postagem');
+          }
+        })
+        .catch(error => {
+          console.error('Erro ao excluir a postagem:', error);
+          alert('Erro ao excluir postagem');
+        });
+      }
+    }
+
+    // Carregar as postagens quando a página for carregada
+    document.addEventListener('DOMContentLoaded', function() {
+      loadPosts();
+    });
+  </script>
+</body>
+</html>

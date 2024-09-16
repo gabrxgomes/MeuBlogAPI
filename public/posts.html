@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Leitura da Postagem</title>
+  
+  <!-- Adicionar Bootstrap CSS -->
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="text-center my-4">
+    <img src="img/pandape.png" alt="Logo Pandapé" width="100">
+    <h1 id="postTitle" class="mt-4">Título da Postagem</h1>
+  </header>
+
+  <main class="container">
+    <section class="mb-5">
+      <!-- Imagem da postagem (se houver) -->
+      <img id="postImage" src="" alt="Imagem da Postagem" class="img-fluid mb-4" style="display: none; border-radius: 8px;">
+      
+      <article id="postContent" class="post-content">
+        <!-- O conteúdo da postagem será carregado aqui -->
+      </article>
+    </section>
+
+    <!-- Modificação no botão para voltar ao blog -->
+    <a href="/" class="btn btn-primary">Voltar para o blog</a>
+  </main>
+  
+  <footer class="text-center my-4">
+    <p>&copy; 2024 Meu Blog</p>
+  </footer>
+
+  <!-- Adicionar Bootstrap JS e dependências -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+  <script>
+    // Carregar a postagem da sessão/localStorage
+    const slug = window.location.pathname.split('/').pop().replace('.html', ''); // Pega o slug da URL
+
+    fetch(`/api/posts/${slug}`)
+      .then(response => response.json())
+      .then(post => {
+        if (post) {
+          document.getElementById('postTitle').innerText = post.title;
+          document.getElementById('postContent').innerHTML = `<p>${post.content}</p>`;
+
+          if (post.image) {
+            const postImage = document.getElementById('postImage');
+            postImage.src = post.image;
+            postImage.style.display = 'block';
+          }
+        } else {
+          document.getElementById('postContent').innerHTML = '<p>Postagem não encontrada!</p>';
+        }
+      })
+      .catch(error => {
+        console.error('Erro ao carregar a postagem:', error);
+        document.getElementById('postContent').innerHTML = '<p>Erro ao carregar a postagem!</p>';
+      });
+  </script>
+</body>
+</html>
